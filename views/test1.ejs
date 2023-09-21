@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<style type="text/css">
+*{margin:0;padding: 0;}
+html,body{width: 100%;height: 100%;}
+.tag_a{display: inline-block;padding: 30px;}
+</style>
+<body>
+	<div>
+		<a href="/test/a" class="tag_a"> a页面 </a>
+		<a href="/test/b" class="tag_a"> b页面 </a>
+		<a href="/test/c" class="tag_a"> c页面 </a>
+	</div>
+	<input type="text" id="a">
+	<div id="b" style="height: 100px;width:200px;background-color: antiquewhite;"></div>
+	<div id="context"></div>
+</body>
+<script src="/javascripts/jquery.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script >
+	$('.tag_a').click(function(event) {
+		event.preventDefault();
+		const h=$(this).prop('href');
+		window.history.pushState('',h,h);
+		getData(h);
+	});
+
+	function getData(url){
+		$.ajax({
+			type:'post',
+			url:url,
+			dataType:'json',
+		}).then(res=>{
+			$('#context').html(res.data);
+		})
+	}
+	
+	window.addEventListener('popstate',()=>{
+		const url=window.location.pathname;
+		getData(url);
+	});
+
+	let inputObj={
+		text:'adsa',
+	};
+	let handler= {
+		get: function (target, prop) {
+			console.log('get')
+			return target[prop];
+		},
+		set: function (target, prop, val) {
+			console.log('set');
+			target[prop] = val;
+			document.querySelector('#b').innerHTML = target[text];
+		},
+	}
+	let _p=new Proxy(inputObj, handler);
+
+	document.getElementById('a').addEventListener('input',function(){
+		console.log(this.value);
+		inputObj.text=this.value;
+	})
+
+	console.log(_p);
+	//箭头函数就是return 语句,箭头函数里面的this 指向的所在对象的父级
+</script>
+</html>

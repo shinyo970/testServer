@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>index</title>
+	<link rel='stylesheet' href='/stylesheets/style.css' />
+
+</head>
+<style>
+*{padding: 0;margin: 0}
+#btn{
+	width: 100%;
+	height: 48px;
+	background-color: cadetblue;
+	color: white;
+	font-size: 20px;
+	margin-top: 15px;
+	border-radius: 6px;
+	outline: none;
+	border: none;
+}
+</style>
+<body>
+	<%=msg%>
+	<input type="file" accept="image/*" id="file">
+	<button class="a">按钮</button>
+	<button class="a">按钮</button>
+	<button class="a">按钮</button>
+	<button class="a">按钮</button>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="/javascripts/jquery.min.js"></script>
+<script>
+
+	let aBtn=document.getElementsByClassName('a');
+	for(var i=0;i<aBtn.length;i++){
+		aBtn[i].onclick=function (){
+			console.log(i)
+		}
+	}
+
+	$('#file').change(function (){
+		let file=$(this)[0].files[0];
+		console.log(file);
+		let formData=new FormData();
+		formData.append('file',file);
+		$.ajax({
+			url:'/uploadFile',
+			type:'post',
+			data:formData,
+			contentType: false,
+			processData: false,
+			success:function (res){
+				console.log(res)
+			}
+		})
+	})
+
+	var timer=null;
+	
+	/*function getData(num){
+		$.ajax({
+			url:'/bb',
+			type:'post',
+			data:{
+				data:num?num:0,
+			},
+			timeout:10*1000,
+			error:function(){
+				getData(num)
+			},
+			success:function(res){
+				timer=setInterval(getData(res.msg),8*1000)
+			}
+		})
+		
+		
+	}
+	getData();*/
+	
+	function fnSend(param){
+		let params=new URLSearchParams();
+		params.append('arg',param);
+		return $.ajax({
+			url:'/bb',
+			data:params,
+			type:'post',
+			traditional:false,
+			processData:false,
+		})
+	}
+	//let arr=[1,2,3,4,5]
+	async function sendData(){
+		for (let i=0;i<arr.length;i++){
+			let d=await fnSend(arr[i]);
+			console.log(d)
+		}
+
+	}
+
+
+	//sendData();
+	//fnSend(1)
+
+
+	let arr = [
+		{
+			id:'1',
+			url:""
+		},
+		{
+			id:'2',
+			url:""
+		},
+		{
+			id:'3',
+			url:""
+		}
+	]
+
+	function getData(item){
+		 return new Promise((resolve => {
+			 $.ajax({
+				 url:'/bb',
+				 type:'post',
+				 data:item,
+			 }).then(res=>{
+				 resolve(res.msg);
+			 })
+		 }))
+	}
+
+	async function getAll(){
+		/*let d=arr.map( item=>{
+			return getData(item);
+		})
+		Promise.all(d).then(res=>{
+			console.log(res)
+		})*/
+
+		/*for (let i=0;i<arr.length;i++){
+			let a= await getData(arr[i]);
+			console.log(a);
+		}*/
+
+
+
+	}
+	//getAll();
+
+
+
+
+</script>
+</html>

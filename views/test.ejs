@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>aa</title>
+    <link rel="stylesheet" href="">
+</head>
+<style type="text/css">
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .aa {
+        background-color: #eee;
+        height: 100px;
+        width: 600px;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 18px;
+
+    }
+
+    #loading {
+        background-color: orangered;
+        text-align: center;
+        height: 50px;
+        line-height: 50px;
+        width: 600px;
+        color: white;
+
+    }
+</style>
+
+<body>
+
+    <div id="listWrap"></div>
+    <div id="loading">loading</div>
+</body>
+<script src="/javascripts/jquery.min.js"></script>
+<script>
+    let pageNo=1;
+    let flag=true;
+    function getData() {
+        if(flag){
+            flag=false;
+            $('#loading').show();
+            $.post('/test/getData', { pageNo }).then(res => {
+                pageNo++; 
+                flag = true;
+                $('#loading').hide();
+                let temp = document.createDocumentFragment();
+                res.msg.forEach((element, key) => {
+                    $('#listWrap').append(`<div class="aa"><p>str: ${element.str}</p><p>pageNo: ${element .pageNo}</p> </div>`);
+                });
+
+            })
+        }
+        
+    }
+    getData();
+    $(window).on('scroll',function(){
+        var scrollPos = $(window).scrollTop();//这里还是使用jquery的方法;获取超出屏幕可视区上面部分的高度
+        var distance = parseFloat($(window).height()) + parseFloat(scrollPos);
+        if ($(document).height() - 50 <= distance) {
+            getData()
+        }
+    })
+</script>
+</html>
